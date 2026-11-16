@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full overflow-hidden select-none">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahana Aura // 3D Virtual Headquarters</title>
+  <meta name="description" content="Interactive 3D Architectural Headquarters for Ahana Aura (AI & Business Transformation Advisor). Explore Reception, About Me, Services, and Portfolio Projects in a studio-grade dollhouse.">
+  <link rel="icon" href="https://ahanaaura.com/favicon.ico" sizes="any">
+
+  <!-- Google Fonts: Space Grotesk & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            clay: {
+              bg: '#ede4dc',
+              dark: '#1e1b18',
+              accent: '#c9a14a',
+              gold: '#d4af37'
+            }
+          },
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Three.js ES Modules Import Map -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=2.7">
+</head>
+
+<body class="theme-day bg-[#ede4dc] text-[#1e1b18] antialiased overflow-hidden h-full w-full">
+
+  <!-- Tactile Fluid Cursor -->
+  <div id="tactical-cursor" class="custom-cursor hidden md:block pointer-events-none"></div>
+  <div id="tactical-dot" class="custom-cursor-dot hidden md:block pointer-events-none"></div>
+
+  <!-- Persistent 3D WebGL Canvas Layer (Full Studio Canvas) -->
+  <div id="canvas-container" class="fixed inset-0 z-0 pointer-events-auto"></div>
+
+  <!-- ======================================================== -->
+  <!-- 3D INTERACTIVE ROOM HOTSPOTS (kriss.ai Style (+) Glass)  -->
+  <!-- ======================================================== -->
+  <div id="hotspots-layer" class="fixed inset-0 pointer-events-none z-30 transition-opacity duration-500 opacity-100">
+    <!-- Pin 1: Reception -->
+    <button class="room-hotspot" data-room="1" title="Explore Reception">
+      <span class="hotspot-pulse"></span>
+      <span class="hotspot-core"><i data-lucide="plus" class="w-3.5 h-3.5 text-white stroke-[2.5]"></i></span>
+      <span class="hotspot-label">Reception</span>
+    </button>
+
+    <!-- Pin 2: About Me -->
+    <button class="room-hotspot" data-room="2" title="Explore About Me">
+      <span class="hotspot-pulse"></span>
+      <span class="hotspot-core"><i data-lucide="plus" class="w-3.5 h-3.5 text-white stroke-[2.5]"></i></span>
+      <span class="hotspot-label">About Me</span>
+    </button>
+
+    <!-- Pin 3: Services -->
+    <button class="room-hotspot" data-room="3" title="Explore Services Lab">
+      <span class="hotspot-pulse"></span>
+      <span class="hotspot-core"><i data-lucide="plus" class="w-3.5 h-3.5 text-white stroke-[2.5]"></i></span>
+      <span class="hotspot-label">Services</span>
+    </button>
+
+    <!-- Pin 4: Portfolio Projects -->
+    <button class="room-hotspot" data-room="4" title="Explore Portfolio Projects">
+      <span class="hotspot-pulse"></span>
+      <span class="hotspot-core"><i data-lucide="plus" class="w-3.5 h-3.5 text-white stroke-[2.5]"></i></span>
+      <span class="hotspot-label">Portfolio Projects</span>
+    </button>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TOP NAVIGATION BAR (kriss.ai Exact Layout)               -->
+  <!-- ======================================================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-8 py-6 pointer-events-none">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Top Left: Minimal Logo (like Kriss.ai) -->
+      <a href="#" data-room="0" class="brand-logo pointer-events-auto flex items-center gap-2.5 group cursor-pointer" title="Return to Overview">
+        <div class="w-8 h-8 rounded-lg bg-[#1e1b18] text-white flex items-center justify-center font-display font-bold text-xs tracking-wider shadow-sm group-hover:scale-105 transition-transform">
+          AA
+        </div>
+        <span class="font-display font-bold text-base tracking-widest text-[#1e1b18] group-hover:text-[#c9a14a] transition-colors">
+          AHANA AURA
+        </span>
+      </a>
+
+      <!-- Top Right: Glass Nav Capsule & Book CTA (like Kriss.ai) -->
+      <div class="pointer-events-auto flex items-center gap-2">
+        <nav class="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/80 shadow-sm text-xs font-sans font-medium text-[#4a453e]">
+          <button class="nav-pill active" data-room="0">Home</button>
+          <button class="nav-pill" data-room="1">Reception</button>
+          <button class="nav-pill" data-room="2">About Me</button>
+          <button class="nav-pill" data-room="3">Services</button>
+          <button class="nav-pill" data-room="4">Portfolio</button>
+        </nav>
+
+        <!-- Book Advisory Button (kriss.ai style) -->
+        <button data-open-booking class="px-5 py-2.5 rounded-full bg-[#1e1b18] hover:bg-[#34302c] text-white font-sans font-medium text-xs tracking-wide shadow-md hover:shadow-lg transition-all cursor-pointer">
+          Book Advisory
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- BOTTOM CONTROLS & HINT (kriss.ai Style)                  -->
+  <!-- ======================================================== -->
+  <!-- Bottom-Left: Subtle Interaction Hint -->
+  <div class="fixed bottom-7 left-8 z-30 pointer-events-none flex items-center gap-2.5 text-xs font-sans text-[#787168]">
+    <div class="w-5 h-8 rounded-full border border-[#787168]/40 flex items-start justify-center p-1">
+      <div class="w-1 h-2 rounded-full bg-[#1e1b18] animate-bounce"></div>
+    </div>
+    <span>Scroll or click hotspots to explore the experience</span>
+  </div>
+
+  <!-- Bottom-Right: Audio & Lighting Stage Toggle -->
+  <div class="fixed bottom-7 right-8 z-30 pointer-events-auto flex items-center gap-2">
+    <!-- Theme Toggle (Day / Sunset / Night) -->
+    <button id="theme-toggle-btn" class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/75 backdrop-blur-md border border-white/80 shadow-sm hover:bg-white text-xs font-mono text-[#4a453e] transition-all cursor-pointer" title="Toggle Lighting Mode">
+      <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500 theme-icon-day"></i>
+      <i data-lucide="sunset" class="w-3.5 h-3.5 text-orange-400 theme-icon-sunset hidden"></i>
+      <i data-lucide="moon" class="w-3.5 h-3.5 text-cyan-400 theme-icon-night hidden"></i>
+      <span id="theme-label" class="hidden sm:inline">DAY</span>
+    </button>
+
+    <!-- Audio Toggle -->
+    <button id="audio-toggle" class="p-2.5 rounded-full bg-white/75 backdrop-blur-md border border-white/80 shadow-sm hover:bg-white text-[#4a453e] transition-all cursor-pointer" title="Toggle Sound FX">
+      <i data-lucide="volume-2" class="w-4 h-4 text-[#1e1b18] audio-on-icon"></i>
+      <i data-lucide="volume-x" class="w-4 h-4 text-slate-400 audio-off-icon hidden"></i>
+    </button>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- SLIDE-OUT ROOM CARDS LAYER (Zoomed-In States 1 to 4)     -->
+  <!-- ======================================================== -->
+  <div id="room-cards-container" class="fixed inset-0 z-35 pointer-events-none flex items-center justify-between p-6 sm:p-14">
+    
+    <!-- ROOM 1 CARD: RECEPTION (Slides in on Left) -->
+    <div id="card-room-1" class="room-card pointer-events-auto hidden transform transition-all duration-500 max-w-md w-full">
+      <div class="room-info-card p-6 sm:p-7 rounded-3xl space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 text-[11px] font-mono font-semibold tracking-wider uppercase border border-amber-500/20">
+            LEVEL 1 // SECTOR 01: RECEPTION
+          </span>
+          <div class="flex items-center gap-1.5 text-[11px] font-mono text-emerald-600">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Retainers Open</span>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-display font-bold text-2xl text-[#1e1b18] mb-1.5">
+            The Executive Lobby
+          </h2>
+          <p class="font-sans text-xs text-[#635d55] leading-relaxed">
+            Welcome to Ahana Aura's transformation headquarters. Partner with strategic leadership to audit bottlenecks, eliminate operational drag, and deploy deterministic AI systems.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 pt-0.5">
+          <div class="stat-pill p-2.5 rounded-2xl border">
+            <div class="text-[9px] font-mono uppercase text-[#787168]">Direct Channel</div>
+            <a href="mailto:advisor@ahanaaura.com" class="text-xs font-mono font-bold text-[#c9a14a] hover:underline">advisor@ahanaaura.com</a>
+          </div>
+          <div class="stat-pill p-2.5 rounded-2xl border">
+            <div class="text-[9px] font-mono uppercase text-[#787168]">Executive Response</div>
+            <div class="text-xs font-display font-bold text-[#1e1b18]">&lt; 24h SLA</div>
+          </div>
+        </div>
+
+        <!-- AI Concierge Assistant Quick Trigger -->
+        <button id="reception-card-chat-btn" onclick="window.__ahanaApp?.openChat()" class="w-full py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[#1e1b18] text-xs font-sans font-semibold shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2 relative z-20 pointer-events-auto">
+          <i data-lucide="sparkles" class="w-4 h-4 text-[#c9a14a] pointer-events-none"></i>
+          <span class="pointer-events-none">Consult AI Reception Concierge</span>
+        </button>
+
+        <div class="pt-1 flex flex-col gap-2">
+          <button data-open-booking class="w-full py-2.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-[#c9a14a]"></i>
+            <span>Schedule Strategic Advisory Call</span>
+          </button>
+          
+          <div class="flex items-center justify-between text-xs pt-0.5">
+            <button class="nav-prev-room text-slate-500 hover:text-black flex items-center gap-1 cursor-pointer font-sans" data-to="0">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Overview
+            </button>
+            <button class="nav-next-room text-slate-500 hover:text-black flex items-center gap-1 cursor-pointer font-sans" data-to="2">
+              About Me <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOM 2 CARD: ABOUT ME (Slides in on Left - Exact ahanaaura.com/about content) -->
+    <div id="card-room-2" class="room-card pointer-events-auto hidden transform transition-all duration-500 max-w-md w-full">
+      <div class="room-info-card p-6 sm:p-7 rounded-3xl space-y-3">
+        <!-- Top Sector Pill & Verified Badge -->
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-mono font-semibold tracking-wider uppercase border border-amber-500/20">
+            LEVEL 1 // SECTOR 02: ABOUT ME
+          </span>
+          <div class="flex items-center gap-1.5 text-[11px] font-mono text-[#c9a14a]">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i>
+            <span>14+ Years Track Record</span>
+          </div>
+        </div>
+
+        <!-- Profile Header with Portrait from ahanaaura.com/about -->
+        <div class="flex items-center gap-3.5 pt-0.5">
+          <div class="relative w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-[#c9a14a] shadow-md flex-shrink-0" style="width: 52px; height: 52px; min-width: 52px; min-height: 52px;">
+            <img src="assets/ahana-portrait.jpeg" alt="Ahana Aura - AI & Transformation Advisor" class="w-full h-full object-cover" style="width: 52px; height: 52px; object-fit: cover;">
+            <div class="absolute inset-0 bg-gradient-to-tr from-[#c9a14a]/20 to-transparent pointer-events-none"></div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="font-display font-bold text-lg text-[#1e1b18]">
+                Ahana <span class="text-[#c9a14a]">Aura</span>
+              </h2>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-[#c9a14a]/15 text-[#8a681c] border border-[#c9a14a]/30">CEO Advisor</span>
+            </div>
+            <p class="font-sans text-xs font-semibold text-[#544e45]">AI & Business Transformation Advisor</p>
+            <p class="font-mono text-[10px] text-[#857b6f] pt-0.5">Innovation Strategist • Technology Leader</p>
+          </div>
+        </div>
+
+        <!-- 3 Core Impact Numbers (from ahanaaura.com/about) -->
+        <div class="grid grid-cols-3 gap-2 pt-0.5">
+          <div class="stat-pill p-2 rounded-xl border text-center transition-transform hover:scale-[1.02]">
+            <div class="text-base font-display font-bold text-[#c9a14a]">₹3Cr+</div>
+            <div class="text-[9px] font-mono uppercase text-[#787168] tracking-tight">Revenue Generated</div>
+          </div>
+          <div class="stat-pill p-2 rounded-xl border text-center transition-transform hover:scale-[1.02]">
+            <div class="text-base font-display font-bold text-[#c9a14a]">19K+</div>
+            <div class="text-[9px] font-mono uppercase text-[#787168] tracking-tight">Users Impacted</div>
+          </div>
+          <div class="stat-pill p-2 rounded-xl border text-center transition-transform hover:scale-[1.02]">
+            <div class="text-base font-display font-bold text-[#c9a14a]">50+</div>
+            <div class="text-[9px] font-mono uppercase text-[#787168] tracking-tight">Projects Delivered</div>
+          </div>
+        </div>
+
+        <!-- Interactive 3-Tab Segmented Control (Zero Scrollbar Layout) -->
+        <div class="pt-0.5 relative z-10">
+          <div class="flex items-center gap-1 p-1 rounded-xl bg-black/5 border border-black/5 text-[11px] font-sans font-medium">
+            <button id="about-tab-btn-story" onclick="window.__ahanaApp?.switchAboutTab('story')" class="about-subtab-btn flex-1 py-1 rounded-lg bg-white text-[#1e1b18] font-semibold shadow-sm transition-all text-center cursor-pointer relative z-10">
+              Story & Vision
+            </button>
+            <button id="about-tab-btn-phil" onclick="window.__ahanaApp?.switchAboutTab('phil')" class="about-subtab-btn flex-1 py-1 rounded-lg text-[#666] hover:text-[#1e1b18] transition-all text-center cursor-pointer relative z-10">
+              Philosophy
+            </button>
+            <button id="about-tab-btn-journey" onclick="window.__ahanaApp?.switchAboutTab('journey')" class="about-subtab-btn flex-1 py-1 rounded-lg text-[#666] hover:text-[#1e1b18] transition-all text-center cursor-pointer relative z-10">
+              The Journey
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Story & Vision -->
+          <div id="about-tab-content-story" class="space-y-2 pt-2">
+            <div class="p-2.5 rounded-xl bg-white/60 border border-white/80 space-y-1">
+              <h3 class="font-display font-bold text-xs text-[#1e1b18]">
+                Building the <span class="text-[#c9a14a]">Future</span> of Business
+              </h3>
+              <p class="font-sans text-[11px] text-[#595249] leading-relaxed">
+                With over 14 years bridging AI and business strategy, Ahana Aura partners with visionary CEOs and enterprise founders to engineer intelligent automation and high-margin revenue engines.
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <div class="px-2 py-1.5 rounded-lg bg-white/50 border border-white/70 flex items-center gap-1.5 text-[10px] font-mono text-[#544e45]">
+                <span class="text-[#c9a14a]">✦</span> C-Suite Advisory
+              </div>
+              <div class="px-2 py-1.5 rounded-lg bg-white/50 border border-white/70 flex items-center gap-1.5 text-[10px] font-mono text-[#544e45]">
+                <span class="text-[#c9a14a]">✦</span> Autonomous Workflows
+              </div>
+              <div class="px-2 py-1.5 rounded-lg bg-white/50 border border-white/70 flex items-center gap-1.5 text-[10px] font-mono text-[#544e45]">
+                <span class="text-[#c9a14a]">✦</span> Deterministic ROI
+              </div>
+              <div class="px-2 py-1.5 rounded-lg bg-white/50 border border-white/70 flex items-center gap-1.5 text-[10px] font-mono text-[#544e45]">
+                <span class="text-[#c9a14a]">✦</span> Zero-to-Scale
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Philosophy (4 Pillars in 2x2 Grid) -->
+          <div id="about-tab-content-phil" class="grid grid-cols-2 gap-1.5 pt-2 hidden">
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1 font-display font-bold text-[11px] text-[#1e1b18]">
+                <span class="text-[#c9a14a]">🎯</span> Purpose-Driven
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Tech must solve real business problems, never hype.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1 font-display font-bold text-[11px] text-[#1e1b18]">
+                <span class="text-[#c9a14a]">⚡</span> Flawless Execution
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Strategy without execution is just wishful thinking.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1 font-display font-bold text-[11px] text-[#1e1b18]">
+                <span class="text-[#c9a14a]">🔄</span> Constant Learning
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">AI evolves daily. Continuous adaptation builds true moats.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1 font-display font-bold text-[11px] text-[#1e1b18]">
+                <span class="text-[#c9a14a]">📊</span> Measurable Impact
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Every engagement tied to quantifiable EBITDA growth.</p>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: The Journey (Milestones 2010 - 2024 in 2x2 Grid) -->
+          <div id="about-tab-content-journey" class="grid grid-cols-2 gap-1.5 pt-2 hidden">
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-[#c9a14a]/20 text-[#8a681c] text-[9px] font-mono font-bold">2010</span>
+                <span class="font-display font-bold text-[11px] text-[#1e1b18]">The Beginning</span>
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Machine learning & predictive enterprise analytics.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-[#c9a14a]/20 text-[#8a681c] text-[9px] font-mono font-bold">2015</span>
+                <span class="font-display font-bold text-[11px] text-[#1e1b18]">First Scale</span>
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Scaled startup from 0 to ₹1Cr via customer AI models.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-[#c9a14a]/20 text-[#8a681c] text-[9px] font-mono font-bold">2019</span>
+                <span class="font-display font-bold text-[11px] text-[#1e1b18]">Enterprise</span>
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Digital transformation impacting 10,000+ operators.</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white/60 border border-white/80 space-y-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-[#c9a14a]/20 text-[#8a681c] text-[9px] font-mono font-bold">2024</span>
+                <span class="font-display font-bold text-[11px] text-[#1e1b18]">AI Revolution</span>
+              </div>
+              <p class="font-sans text-[10px] text-[#635d55] leading-snug">Engineering autonomous deterministic AI agent engines.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="pt-1 flex flex-col gap-2">
+          <button data-open-booking class="w-full py-2.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-[#c9a14a]"></i>
+            <span>Schedule Strategic Advisory Call</span>
+          </button>
+          
+          <div class="flex items-center justify-between text-xs pt-0.5">
+            <button class="nav-prev-room text-slate-500 hover:text-black flex items-center gap-1 cursor-pointer font-sans" data-to="1">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Reception
+            </button>
+            <button class="nav-next-room text-slate-500 hover:text-black flex items-center gap-1 cursor-pointer font-sans" data-to="3">
+              Services <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOM 3 CARD: SERVICES (Slides in on Left) -->
+    <div id="card-room-3" class="room-card pointer-events-auto hidden transform transition-all duration-500 max-w-md w-full">
+      <div class="room-info-card p-6 sm:p-7 rounded-3xl space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full bg-teal-500/15 text-teal-800 dark:text-teal-300 text-[11px] font-mono font-semibold tracking-wider uppercase border border-teal-500/20">
+            LEVEL 2 // SECTOR 03: SERVICES
+          </span>
+          <div class="flex items-center gap-1.5 text-[11px] font-mono text-teal-600 dark:text-teal-400">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            <span>Live Command Lab</span>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-display font-bold text-2xl text-[#1e1b18] dark:text-white mb-1">
+            AI Systems Command Lab
+          </h2>
+          <p class="font-sans text-xs text-[#635d55] dark:text-slate-300 leading-relaxed">
+            Interactive demonstration of Ahana Aura's 4 core enterprise transformation pillars:
+          </p>
+        </div>
+
+        <!-- 4 Interactive Strategic Pillar Tabs -->
+        <div class="flex p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 text-xs font-sans">
+          <button id="service-tab-btn-strategy" onclick="window.__ahanaApp?.switchServicePillar('strategy')" class="service-pill-btn flex-1 py-1 rounded-lg bg-white dark:bg-slate-800 text-[#1e1b18] dark:text-white font-semibold shadow-sm transition-all text-center cursor-pointer text-[11px]">
+            Strategy
+          </button>
+          <button id="service-tab-btn-automation" onclick="window.__ahanaApp?.switchServicePillar('automation')" class="service-pill-btn flex-1 py-1 rounded-lg text-[#666] dark:text-slate-400 hover:text-[#1e1b18] transition-all text-center cursor-pointer text-[11px]">
+            Autonomous
+          </button>
+          <button id="service-tab-btn-caio" onclick="window.__ahanaApp?.switchServicePillar('caio')" class="service-pill-btn flex-1 py-1 rounded-lg text-[#666] dark:text-slate-400 hover:text-[#1e1b18] transition-all text-center cursor-pointer text-[11px]">
+            Fractional CAIO
+          </button>
+          <button id="service-tab-btn-revenue" onclick="window.__ahanaApp?.switchServicePillar('revenue')" class="service-pill-btn flex-1 py-1 rounded-lg text-[#666] dark:text-slate-400 hover:text-[#1e1b18] transition-all text-center cursor-pointer text-[11px]">
+            Revenue
+          </button>
+        </div>
+
+        <!-- Dynamic Demonstration Content Container -->
+        <div id="service-content-container" class="p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/60 border border-black/5 dark:border-white/10 space-y-2.5">
+          <!-- Populated dynamically by switchServicePillar() -->
+        </div>
+
+        <div class="pt-1 flex flex-col gap-2">
+          <button data-open-booking class="w-full py-2.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="cpu" class="w-4 h-4 text-[#c9a14a]"></i>
+            <span>Deploy Custom Architecture Sprint</span>
+          </button>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <button class="nav-prev-room text-slate-500 hover:text-black dark:hover:text-white flex items-center gap-1 cursor-pointer font-sans" data-to="2">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> About Me
+            </button>
+            <button class="nav-next-room text-slate-500 hover:text-black dark:hover:text-white flex items-center gap-1 cursor-pointer font-sans" data-to="4">
+              Portfolio <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOM 4 CARD: PORTFOLIO PROJECTS (Slides in on Left) -->
+    <div id="card-room-4" class="room-card pointer-events-auto hidden transform transition-all duration-500 max-w-md w-full">
+      <div class="room-info-card p-6 sm:p-7 rounded-3xl space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full bg-blue-500/15 text-blue-800 dark:text-blue-300 text-[11px] font-mono font-semibold tracking-wider uppercase border border-blue-500/20">
+            LEVEL 2 // SECTOR 04: PORTFOLIO
+          </span>
+          <div class="flex items-center gap-1.5 text-[11px] font-mono text-blue-600 dark:text-blue-400">
+            <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+            <span>4 Enterprise Case Studies</span>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-display font-bold text-2xl text-[#1e1b18] dark:text-white mb-1">
+            The Impact Observatory
+          </h2>
+          <p class="font-sans text-xs text-[#635d55] dark:text-slate-300 leading-relaxed">
+            Select a verified case study to inspect architecture and launch the slide walkthrough:
+          </p>
+        </div>
+
+        <!-- 4 Interactive Project Items -->
+        <div class="space-y-2 text-xs" id="portfolio-project-list">
+          <button data-project="fintech" onclick="window.__ahanaApp?.selectPortfolioProject('fintech')" class="portfolio-item-btn w-full p-2.5 rounded-xl border border-[#c9a14a] bg-white/90 dark:bg-slate-800/90 flex justify-between items-center transition-all cursor-pointer text-left shadow-sm">
+            <div>
+              <div class="font-semibold text-[#1e1b18] dark:text-white text-xs">FinTech Startup Scale</div>
+              <div class="text-[10px] text-slate-500">Autonomous Underwriting & Real-Time Risk</div>
+            </div>
+            <span class="font-mono text-[#c9a14a] font-bold text-[11px]">+250% Rev / -65% CAC</span>
+          </button>
+
+          <button data-project="ecommerce" onclick="window.__ahanaApp?.selectPortfolioProject('ecommerce')" class="portfolio-item-btn w-full p-2.5 rounded-xl border border-black/5 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 hover:border-emerald-500 flex justify-between items-center transition-all cursor-pointer text-left">
+            <div>
+              <div class="font-semibold text-[#1e1b18] dark:text-white text-xs">Global E-Commerce</div>
+              <div class="text-[10px] text-slate-500">Supply Chain & Algorithmic Pricing Engine</div>
+            </div>
+            <span class="font-mono text-emerald-600 font-bold text-[11px]">₹2Cr Saved / +45% Speed</span>
+          </button>
+
+          <button data-project="health" onclick="window.__ahanaApp?.selectPortfolioProject('health')" class="portfolio-item-btn w-full p-2.5 rounded-xl border border-black/5 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 hover:border-blue-500 flex justify-between items-center transition-all cursor-pointer text-left">
+            <div>
+              <div class="font-semibold text-[#1e1b18] dark:text-white text-xs">HealthTech Enterprise</div>
+              <div class="text-[10px] text-slate-500">Clinical Workflow & Patient Retention RAG</div>
+            </div>
+            <span class="font-mono text-blue-600 font-bold text-[11px]">10K+ Users / 85% NRR</span>
+          </button>
+
+          <button data-project="saas" onclick="window.__ahanaApp?.selectPortfolioProject('saas')" class="portfolio-item-btn w-full p-2.5 rounded-xl border border-black/5 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 hover:border-purple-500 flex justify-between items-center transition-all cursor-pointer text-left">
+            <div>
+              <div class="font-semibold text-[#1e1b18] dark:text-white text-xs">Enterprise SaaS Copilot</div>
+              <div class="text-[10px] text-slate-500">Multi-Agent Developer & Support Swarm</div>
+            </div>
+            <span class="font-mono text-purple-600 font-bold text-[11px]">80% Automation / 99.4% CSAT</span>
+          </button>
+        </div>
+
+        <div class="pt-1 flex flex-col gap-2">
+          <!-- Primary: Launch PPT Slide Walkthrough -->
+          <button id="open-ppt-slide-deck-btn" onclick="window.__ahanaApp?.openProjectPPT()" class="w-full py-2.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="presentation" class="w-4 h-4 text-[#c9a14a]"></i>
+            <span>Launch Slide Walkthrough (PPT)</span>
+          </button>
+
+          <button data-open-roi class="w-full py-2 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-black/10 dark:border-white/10 text-slate-700 dark:text-slate-200 text-xs font-sans font-medium hover:bg-white transition-all cursor-pointer flex items-center justify-center gap-1.5">
+            <i data-lucide="calculator" class="w-3.5 h-3.5 text-[#c9a14a]"></i>
+            <span>Simulate Transformation ROI</span>
+          </button>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <button class="nav-prev-room text-slate-500 hover:text-black dark:hover:text-white flex items-center gap-1 cursor-pointer font-sans" data-to="3">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Services
+            </button>
+            <button class="nav-next-room text-slate-500 hover:text-black dark:hover:text-white flex items-center gap-1 cursor-pointer font-sans" data-to="0">
+              Overview <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: STRATEGIC CONSULTATION BOOKING                    -->
+  <!-- ======================================================== -->
+  <div id="booking-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-6">
+    <div class="room-info-card rounded-3xl max-w-lg w-full p-8 shadow-2xl relative modal-content space-y-4">
+      
+      <button id="close-booking-modal" class="absolute top-6 right-6 p-2 rounded-full hover:bg-black/5 text-[#787168] hover:text-black transition-colors cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#1e1b18] text-[#c9a14a] flex items-center justify-center font-display font-bold text-sm">
+          AA
+        </div>
+        <div>
+          <span class="text-[10px] font-mono text-[#c9a14a] uppercase tracking-widest font-semibold">Confidential Advisory Briefing</span>
+          <h3 class="font-display font-bold text-xl text-[#1e1b18]">Schedule Strategic Session</h3>
+        </div>
+      </div>
+
+      <p class="text-xs text-[#635d55] font-normal leading-relaxed">
+        Submit your executive profile and current operational bottlenecks. All briefs are protected under strict mutual confidentiality. Direct routing to <span class="font-mono text-[#c9a14a] font-bold">advisor@ahanaaura.com</span>.
+      </p>
+
+      <form id="modal-booking-form" class="space-y-3.5 pt-2">
+        <div class="grid grid-cols-2 gap-3">
+          <input type="text" required placeholder="Full Name *" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-slate-300 text-[#1e1b18] placeholder-slate-400 text-xs focus:outline-none focus:border-[#c9a14a]">
+          <input type="email" required placeholder="Work Email *" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-slate-300 text-[#1e1b18] placeholder-slate-400 text-xs focus:outline-none focus:border-[#c9a14a]">
+        </div>
+        <input type="text" placeholder="Organization / Venture (Optional)" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-slate-300 text-[#1e1b18] placeholder-slate-400 text-xs focus:outline-none focus:border-[#c9a14a]">
+        <textarea rows="3" required placeholder="Primary bottleneck, CAC challenge, or desired AI workflow automation... *" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-slate-300 text-[#1e1b18] placeholder-slate-400 text-xs focus:outline-none focus:border-[#c9a14a]"></textarea>
+
+        <button id="modal-booking-submit" type="submit" class="w-full py-3 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer">
+          <span>Transmit Confidential Request to Ahana Aura</span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: DYNAMIC TRANSFORMATION ROI SIMULATOR             -->
+  <!-- ======================================================== -->
+  <div id="roi-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-6">
+    <div class="room-info-card rounded-3xl max-w-xl w-full p-8 shadow-2xl relative modal-content space-y-6">
+      
+      <button id="close-roi-modal" class="absolute top-6 right-6 p-2 rounded-full hover:bg-black/5 text-[#787168] hover:text-black transition-colors cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div>
+        <span class="text-[10px] font-mono text-[#c9a14a] uppercase tracking-widest font-semibold">Dynamic Financial Model</span>
+        <h3 class="font-display font-bold text-2xl text-[#1e1b18]">Transformation ROI Calculator</h3>
+        <p class="text-xs text-[#635d55] mt-1">Simulate operational savings and capacity reclaimed via autonomous workflow integration.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between text-xs text-[#1e1b18] font-medium mb-1">
+            <span>Annual Company Revenue</span>
+            <span id="roi-rev-val" class="font-mono font-bold text-[#c9a14a]">$5M</span>
+          </div>
+          <input id="roi-rev-slider" type="range" min="0.5" max="50" step="0.5" value="5" class="w-full">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs text-[#1e1b18] font-medium mb-1">
+            <span>Team Headcount</span>
+            <span id="roi-team-val" class="font-mono font-bold text-[#c9a14a]">25 Staff</span>
+          </div>
+          <input id="roi-team-slider" type="range" min="5" max="250" step="5" value="25" class="w-full">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs text-[#1e1b18] font-medium mb-1">
+            <span>Manual Repetitive Hours Per Person / Week</span>
+            <span id="roi-hours-val" class="font-mono font-bold text-[#c9a14a]">14 hrs/wk</span>
+          </div>
+          <input id="roi-hours-slider" type="range" min="4" max="25" step="1" value="14" class="w-full">
+        </div>
+      </div>
+
+      <!-- Projection Results Box -->
+      <div class="p-5 rounded-2xl bg-[#ede4dc]/80 border border-slate-300 text-center space-y-3">
+        <div>
+          <div class="text-[10px] font-mono uppercase text-[#787168] tracking-wider">Projected Annual Savings</div>
+          <div id="roi-annual-savings" class="font-display font-extrabold text-3xl sm:text-4xl text-[#1e1b18] mt-1">$490k/yr</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-300 font-mono text-xs">
+          <div>Reclaimed: <strong id="roi-annual-hours" class="text-[#1e1b18]">10,920 hrs</strong></div>
+          <div>Projected ROI: <strong id="roi-projected-percent" class="text-emerald-600">380%</strong></div>
+        </div>
+      </div>
+
+      <button data-open-booking class="w-full py-3.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer" onclick="document.getElementById('roi-modal').classList.add('hidden'); document.getElementById('booking-modal').classList.remove('hidden'); document.getElementById('booking-modal').classList.add('flex');">
+        <span>Unlock Full Architectural Transformation Blueprint</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- RECEPTION WELCOME CONCIERGE TOAST POPUP                  -->
+  <!-- ======================================================== -->
+  <div id="reception-welcome-toast" class="fixed top-24 right-8 z-40 max-w-sm w-full bg-[#fdfbf7]/98 dark:bg-[#1f1c19]/98 backdrop-blur-xl border border-[#c9a14a]/30 rounded-2xl p-4 shadow-2xl transform transition-all duration-500 translate-y-4 opacity-0 pointer-events-none hidden">
+    <div class="flex items-start gap-3">
+      <div class="relative w-10 h-10 rounded-xl bg-[#1e1b18] text-[#c9a14a] flex items-center justify-center flex-shrink-0 shadow-md border border-[#c9a14a]/20">
+        <i data-lucide="bot" class="w-5 h-5"></i>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full animate-ping"></span>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+      </div>
+      <div class="flex-1 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono uppercase text-[#9e7629] dark:text-[#c9a14a] font-bold tracking-wider">AI Executive Concierge</span>
+          <button id="close-welcome-toast-btn" onclick="window.__ahanaApp?.dismissWelcomeToast()" class="text-slate-400 hover:text-[#1e1b18] dark:hover:text-white cursor-pointer p-0.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+        <h4 class="font-display font-bold text-xs text-[#1e1b18] dark:text-white">Welcome to Reception!</h4>
+        <p class="font-sans text-[11px] text-[#635d55] dark:text-slate-300 leading-snug">
+          Looking for specific details about Ahana Aura's AI advisory or enterprise scaling? Feel free to use our Assistant Chatbot below!
+        </p>
+        <div class="pt-1.5 flex items-center gap-2">
+          <button id="open-chat-from-toast" onclick="window.__ahanaApp?.openChat()" class="px-3.5 py-1.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-[11px] font-sans font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all">
+            <i data-lucide="message-square" class="w-3.5 h-3.5 text-[#c9a14a] pointer-events-none"></i>
+            <span class="pointer-events-none">Chat with Assistant</span>
+          </button>
+          <button id="dismiss-welcome-toast" onclick="window.__ahanaApp?.dismissWelcomeToast()" class="px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 text-[11px] font-sans cursor-pointer transition-all">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- PORTFOLIO DRONE RECON TOAST POPUP                        -->
+  <!-- ======================================================== -->
+  <div id="drone-recon-toast" class="fixed top-24 right-8 z-40 max-w-sm w-full bg-[#fdfbf7]/98 dark:bg-[#1f1c19]/98 backdrop-blur-xl border border-[#c9a14a]/30 rounded-2xl p-4 shadow-2xl transform transition-all duration-500 translate-y-4 opacity-0 pointer-events-none hidden">
+    <div class="flex items-start gap-3">
+      <div class="relative w-10 h-10 rounded-xl bg-[#1e1b18] text-[#c9a14a] flex items-center justify-center flex-shrink-0 shadow-md border border-[#c9a14a]/20">
+        <i data-lucide="crosshair" class="w-5 h-5"></i>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-[#c9a14a] border-2 border-white rounded-full animate-ping"></span>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-[#c9a14a] border-2 border-white rounded-full"></span>
+      </div>
+      <div class="flex-1 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono uppercase text-[#9e7629] dark:text-[#c9a14a] font-bold tracking-wider">AI Patrol Drone // Sector 04</span>
+          <button id="close-drone-toast-btn" onclick="window.__ahanaApp?.dismissDroneToast()" class="text-slate-400 hover:text-[#1e1b18] dark:hover:text-white cursor-pointer p-0.5">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+        <h4 class="font-display font-bold text-xs text-[#1e1b18] dark:text-white">Executive Portfolio Detected!</h4>
+        <p class="font-sans text-[11px] text-[#635d55] dark:text-slate-300 leading-snug">
+          Autonomous recon identified 4 verified enterprise case studies. Would you like to inspect the presentation deck?
+        </p>
+        <div class="pt-1.5 flex items-center gap-2">
+          <button id="toast-open-portfolio-ppt-btn" onclick="window.__ahanaApp?.openProjectPPT()" class="px-3.5 py-1.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-[11px] font-sans font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all">
+            <i data-lucide="presentation" class="w-3 h-3 text-[#c9a14a] pointer-events-none"></i>
+            <span class="pointer-events-none">Launch Slide Walkthrough</span>
+          </button>
+          <button id="toast-dismiss-drone-btn" onclick="window.__ahanaApp?.dismissDroneToast()" class="px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 text-[11px] font-sans cursor-pointer transition-all">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING CONCIERGE CHAT TRIGGER PILL -->
+  <button id="floating-chat-trigger" onclick="window.__ahanaApp?.openChat()" class="fixed bottom-7 right-32 z-30 px-3.5 py-2 rounded-full bg-white/85 dark:bg-[#201d1a]/85 backdrop-blur-md border border-[#e8dfd3] dark:border-[#38332c] shadow-md hover:bg-white text-xs font-sans font-medium text-[#1e1b18] dark:text-white transition-all cursor-pointer flex items-center gap-2 group pointer-events-auto">
+    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse pointer-events-none"></span>
+    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#c9a14a] pointer-events-none"></i>
+    <span class="pointer-events-none">AI Concierge</span>
+  </button>
+
+  <!-- ======================================================== -->
+  <!-- AI CONCIERGE CHATBOT MODAL (Executive Studio Dossier)   -->
+  <!-- ======================================================== -->
+  <div id="concierge-chat-modal" class="fixed inset-0 z-50 pointer-events-none hidden flex items-end sm:items-center justify-end sm:p-8 transition-opacity duration-300 opacity-0">
+    <div id="concierge-chat-backdrop" onclick="window.__ahanaApp?.closeChat()" class="fixed inset-0 bg-[#1e1b18]/45 backdrop-blur-sm pointer-events-none transition-opacity duration-300 opacity-0"></div>
+    
+    <div id="concierge-chat-window" class="relative pointer-events-auto w-full sm:w-[430px] max-h-[85vh] h-[580px] bg-[#fdfbf7]/98 dark:bg-[#181614]/98 backdrop-blur-2xl rounded-t-3xl sm:rounded-3xl border border-[#e8dfd3] dark:border-[#38332c] shadow-2xl flex flex-col overflow-hidden transform transition-all duration-300 translate-y-8 sm:translate-y-4">
+      
+      <!-- Header -->
+      <div class="px-5 py-3.5 border-b border-[#e8dfd3] dark:border-[#38332c] flex items-center justify-between bg-[#f8f4ee] dark:bg-[#1f1c19]">
+        <div class="flex items-center gap-3">
+          <div class="relative w-9 h-9 rounded-xl bg-[#1e1b18] text-[#c9a14a] flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="bot" class="w-5 h-5"></i>
+            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h3 class="font-display font-bold text-sm text-[#1e1b18] dark:text-white">Ahana Aura Concierge</h3>
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono bg-[#c9a14a]/15 text-[#9e7629] dark:text-[#c9a14a] font-bold">AI ASSISTANT</span>
+            </div>
+            <p class="text-[10px] font-mono text-emerald-600 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online • Instant Answers
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-1">
+          <button id="clear-chat-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-[#1e1b18] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer" title="Reset Chat">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          </button>
+          <button id="close-chat-btn" onclick="window.__ahanaApp?.closeChat()" class="p-1.5 rounded-lg text-slate-400 hover:text-[#1e1b18] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer" title="Close">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Message History Container -->
+      <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs font-sans bg-[#fdfbf7] dark:bg-[#181614]">
+        <!-- Initial Welcome Message from Concierge -->
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-[#c9a14a]/15 text-[#9e7629] dark:text-[#c9a14a] flex items-center justify-center flex-shrink-0">
+            <i data-lucide="bot" class="w-4 h-4"></i>
+          </div>
+          <div class="max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-[#faf6f0] dark:bg-[#201d1a] border border-[#e8dfd3] dark:border-[#38332c] text-[#2b2723] dark:text-[#ede4dc] space-y-1.5 shadow-xs">
+            <p class="leading-relaxed">
+              Welcome to <strong>Ahana Aura's Executive Virtual Headquarters</strong>! 👋
+            </p>
+            <p class="leading-relaxed">
+              I'm your AI Concierge. I can answer any questions about Ahana's 14+ years AI advisory track record, enterprise methodologies, client ROI, or help you book a strategic consultation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Suggested Chips in 2x2 Grid (Clean Zero Scrollbar Layout) -->
+      <div class="px-4 py-2 border-t border-[#e8dfd3] dark:border-[#38332c] bg-[#f8f4ee] dark:bg-[#1f1c19] grid grid-cols-2 gap-1.5">
+        <button class="chat-chip px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#26221e] border border-[#d8cfc4] dark:border-[#3d3730] text-[10px] font-sans text-[#4a453e] dark:text-[#d4ccc2] hover:border-[#c9a14a] hover:text-[#1e1b18] dark:hover:text-white transition-all cursor-pointer text-center flex items-center justify-center shadow-xs">
+          ✦ What does Ahana do?
+        </button>
+        <button class="chat-chip px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#26221e] border border-[#d8cfc4] dark:border-[#3d3730] text-[10px] font-sans text-[#4a453e] dark:text-[#d4ccc2] hover:border-[#c9a14a] hover:text-[#1e1b18] dark:hover:text-white transition-all cursor-pointer text-center flex items-center justify-center shadow-xs">
+          ✦ Book an advisory call
+        </button>
+        <button class="chat-chip px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#26221e] border border-[#d8cfc4] dark:border-[#3d3730] text-[10px] font-sans text-[#4a453e] dark:text-[#d4ccc2] hover:border-[#c9a14a] hover:text-[#1e1b18] dark:hover:text-white transition-all cursor-pointer text-center flex items-center justify-center shadow-xs">
+          ✦ Retainer models & fees
+        </button>
+        <button class="chat-chip px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#26221e] border border-[#d8cfc4] dark:border-[#3d3730] text-[10px] font-sans text-[#4a453e] dark:text-[#d4ccc2] hover:border-[#c9a14a] hover:text-[#1e1b18] dark:hover:text-white transition-all cursor-pointer text-center flex items-center justify-center shadow-xs">
+          ✦ Verified impact metrics
+        </button>
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="p-3 border-t border-[#e8dfd3] dark:border-[#38332c] bg-[#fdfbf7] dark:bg-[#181614]">
+        <form id="chat-input-form" class="flex items-center gap-2">
+          <input type="text" id="chat-user-input" placeholder="Ask about AI advisory, frameworks, retainers..." class="flex-1 px-3.5 py-2.5 rounded-xl bg-white dark:bg-[#201d1a] border border-[#d8cfc4] dark:border-[#38332c] text-xs font-sans text-[#1e1b18] dark:text-white placeholder:text-[#8a8276] focus:outline-none focus:ring-1 focus:ring-[#c9a14a] shadow-xs" autocomplete="off">
+          <button type="submit" id="chat-send-btn" class="p-2.5 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white cursor-pointer shadow-sm transition-all flex items-center justify-center">
+            <i data-lucide="send" class="w-4 h-4 text-[#c9a14a]"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- EXECUTIVE PPT / SLIDE DECK PRESENTATION MODAL            -->
+  <!-- ======================================================== -->
+  <div id="project-ppt-modal" class="fixed inset-0 z-50 hidden pointer-events-none flex items-center justify-center p-3 sm:p-6 transition-all duration-300 opacity-0">
+    <!-- Backdrop (Consistent warm dimming) -->
+    <div id="project-ppt-backdrop" onclick="window.__ahanaApp?.closeProjectPPT()" class="absolute inset-0 bg-[#1e1b18]/65 backdrop-blur-md transition-opacity pointer-events-none"></div>
+
+    <!-- Presentation Slide Frame (Executive Studio Dossier Aesthetic) -->
+    <div id="project-ppt-container" class="relative z-10 w-full max-w-[1060px] bg-[#fdfbf7] dark:bg-[#181614] border border-[#e8dfd3] dark:border-[#38332c] rounded-3xl shadow-2xl overflow-hidden flex flex-col pointer-events-auto max-h-[92vh]">
+      
+      <!-- Top Dynamic Slide Progress Bar -->
+      <div class="w-full h-[3px] bg-[#e8dfd3] dark:bg-[#2c2722] overflow-hidden">
+        <div id="ppt-slide-progress-bar" class="h-full bg-gradient-to-r from-[#c9a14a] via-amber-400 to-[#8f6a1e] transition-all duration-300" style="width: 25%;"></div>
+      </div>
+
+      <!-- Slide Top Bar (Keynote Executive Architecture) -->
+      <div class="px-6 py-4 bg-[#f8f5ee] dark:bg-[#1a1714] border-b border-[#e8dfd3] dark:border-[#38332c] flex items-center justify-between gap-4 flex-shrink-0">
+        <!-- Left: Dossier Emblem & Unwrapped Title Hierarchy -->
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-[#1e1b18] text-[#c9a14a] flex items-center justify-center shadow-sm flex-shrink-0 border border-[#c9a14a]/25">
+            <i data-lucide="presentation" class="w-5 h-5"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="ppt-project-tag" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider text-[#8f6a1e] dark:text-[#c9a14a] font-bold bg-[#c9a14a]/15 border border-[#c9a14a]/25 whitespace-nowrap">CASE STUDY 01 // FINTECH</span>
+              <span class="text-[#b5aca0] dark:text-[#554f46] text-xs">•</span>
+              <span id="ppt-slide-counter" class="text-[11px] font-mono text-[#787168] dark:text-[#a8a199] font-semibold whitespace-nowrap">Slide 01 of 04</span>
+            </div>
+            <h3 id="ppt-project-title" class="font-display font-bold text-sm sm:text-base text-[#1e1b18] dark:text-white truncate max-w-sm sm:max-w-md pt-0.5">FinTech Autonomous Underwriting Engine</h3>
+          </div>
+        </div>
+
+        <!-- Center: Segmented Navigation Pills -->
+        <div class="hidden lg:flex items-center gap-1 p-1 rounded-xl bg-[#ebe3d5] dark:bg-[#26211c] border border-[#ded5c7] dark:border-[#3d3730] text-xs font-mono">
+          <button data-slide="0" onclick="window.__ahanaApp?.goToSlide(0)" class="ppt-tab-btn px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer font-bold">1. Challenge</button>
+          <button data-slide="1" onclick="window.__ahanaApp?.goToSlide(1)" class="ppt-tab-btn px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">2. Architecture</button>
+          <button data-slide="2" onclick="window.__ahanaApp?.goToSlide(2)" class="ppt-tab-btn px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">3. Impact</button>
+          <button data-slide="3" onclick="window.__ahanaApp?.goToSlide(3)" class="ppt-tab-btn px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">4. Playbook</button>
+        </div>
+
+        <!-- Right: Styled Project Switcher & Close Button -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <div class="relative">
+            <select id="ppt-project-select" onchange="window.__ahanaApp?.selectPortfolioProject(this.value)" class="text-xs font-sans font-semibold bg-white dark:bg-[#25201b] text-[#1e1b18] dark:text-white border border-[#d8cfc4] dark:border-[#3d3730] rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-1 focus:ring-[#c9a14a] shadow-xs cursor-pointer appearance-none">
+              <option value="fintech">FinTech Scale</option>
+              <option value="ecommerce">Global E-Commerce</option>
+              <option value="health">Healthcare SaaS</option>
+              <option value="saas">Enterprise SaaS</option>
+            </select>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#787168] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+          <button onclick="window.__ahanaApp?.closeProjectPPT()" class="w-9 h-9 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-[#787168] hover:text-[#1e1b18] dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer border border-transparent hover:border-[#ded5c7] dark:hover:border-[#3d3730]" title="Close Presentation (Esc)">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slide Viewport (Smooth Content Injection in Warm Paper Aesthetic) -->
+      <div id="ppt-slide-viewport" class="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 text-[#1e1b18] dark:text-white min-h-[420px] bg-[#fdfbf7] dark:bg-[#181614]">
+        <!-- Slide content rendered dynamically -->
+      </div>
+
+      <!-- Slide Bottom Control Bar -->
+      <div class="px-6 py-3.5 bg-[#f8f5ee] dark:bg-[#1a1714] border-t border-[#e8dfd3] dark:border-[#38332c] flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <button id="ppt-prev-slide-btn" onclick="window.__ahanaApp?.prevSlide()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-[#282420] border border-[#d8cfc4] dark:border-[#3d3730] text-[#1e1b18] dark:text-white hover:bg-[#f2ebdf] text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs group">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></i>
+            <span>Previous</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono text-[#8a8276] bg-[#f0e9dd] dark:bg-[#342e27] px-1.5 py-0.5 rounded">←</span>
+          </button>
+          <button id="ppt-next-slide-btn" onclick="window.__ahanaApp?.nextSlide()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-[#282420] border border-[#d8cfc4] dark:border-[#3d3730] text-[#1e1b18] dark:text-white hover:bg-[#f2ebdf] text-xs font-sans font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs group">
+            <span>Next Slide</span>
+            <span class="hidden sm:inline-block text-[10px] font-mono text-[#8a8276] bg-[#f0e9dd] dark:bg-[#342e27] px-1.5 py-0.5 rounded">→</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+        </div>
+
+        <!-- Slide Stepper (Interactive Step Numbers) -->
+        <div class="flex items-center gap-2" id="ppt-indicator-dots">
+          <button onclick="window.__ahanaApp?.goToSlide(0)" class="ppt-indicator-step text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full transition-all bg-[#c9a14a] text-slate-950 shadow-xs cursor-pointer">01</button>
+          <button onclick="window.__ahanaApp?.goToSlide(1)" class="ppt-indicator-step text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-all bg-[#e8dfd3] dark:bg-[#38332c] text-[#787168] hover:text-[#1e1b18] cursor-pointer">02</button>
+          <button onclick="window.__ahanaApp?.goToSlide(2)" class="ppt-indicator-step text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-all bg-[#e8dfd3] dark:bg-[#38332c] text-[#787168] hover:text-[#1e1b18] cursor-pointer">03</button>
+          <button onclick="window.__ahanaApp?.goToSlide(3)" class="ppt-indicator-step text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-all bg-[#e8dfd3] dark:bg-[#38332c] text-[#787168] hover:text-[#1e1b18] cursor-pointer">04</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button data-open-booking class="px-4 py-2 rounded-xl bg-[#1e1b18] hover:bg-[#34302c] text-white text-xs font-sans font-semibold shadow-md transition-all cursor-pointer flex items-center gap-2 group">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#c9a14a] group-hover:scale-110 transition-transform"></i>
+            <span>Book Strategic Advisory Call</span>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-[#c9a14a]"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    <!-- Scripts -->
+  <script type="module" src="js/main.js?v=2.8"></script>
+  <script>
+    // Initialize Lucide Icons
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

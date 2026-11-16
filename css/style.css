@@ -1,0 +1,445 @@
+/* ========================================================
+   Ahana Aura // 3D Virtual Headquarters Stylesheet
+   Studio Aesthetics & Precision Dolls-House Layout (kriss.ai style)
+   ======================================================== */
+
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Theme: Day Defaults (Studio Clay) */
+  --bg-color: #ede4dc;
+  --text-main: #1e1b18;
+  --text-muted: #635d55;
+  --accent: #c9a14a;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(255, 255, 255, 0.95);
+  --stat-bg: #f5ede6;
+  --stat-border: rgba(255, 255, 255, 0.6);
+}
+
+body.theme-sunset {
+  --bg-color: #e8cfb8;
+  --text-main: #231815;
+  --text-muted: #6d534b;
+  --accent: #ea580c;
+  --card-bg: rgba(255, 245, 238, 0.92);
+  --card-border: rgba(255, 255, 255, 0.9);
+  --stat-bg: #fbeee4;
+  --stat-border: rgba(255, 255, 255, 0.7);
+}
+
+body.theme-night {
+  --bg-color: #0b0f19;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --card-bg: rgba(15, 23, 42, 0.9);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --stat-bg: rgba(30, 41, 59, 0.75);
+  --stat-border: rgba(255, 255, 255, 0.1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  scroll-behavior: smooth;
+  overflow: hidden;
+  transition: background-color 0.5s ease;
+}
+
+body {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  transition: background-color 0.5s ease;
+}
+
+/* Fonts */
+.font-sans { font-family: var(--font-sans); }
+.font-display { font-family: var(--font-display); }
+.font-mono { font-family: var(--font-mono); }
+
+/* Selection */
+::selection {
+  background: rgba(201, 161, 74, 0.35);
+  color: #1e1b18;
+}
+
+/* Custom Tactile Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(30, 27, 24, 0.35);
+  background: radial-gradient(circle, rgba(201, 161, 74, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #c9a14a;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-hover {
+  width: 48px;
+  height: 48px;
+  border-color: #c9a14a;
+  background: radial-gradient(circle, rgba(201, 161, 74, 0.25) 0%, transparent 70%);
+}
+
+/* Navigation Capsule Pills */
+.nav-pill {
+  position: relative;
+  padding: 0.35rem 0.95rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #635d55;
+  border-radius: 9999px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-pill:hover {
+  color: #1e1b18;
+}
+
+.nav-pill.active {
+  color: #1e1b18;
+  background: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-night .nav-pill {
+  color: #94a3b8;
+}
+body.theme-night .nav-pill:hover {
+  color: #ffffff;
+}
+body.theme-night .nav-pill.active {
+  color: #0f172a;
+  background: #ffffff;
+}
+
+/* 3D Interactive Room Hotspots (kriss.ai Style Minimal Glass Circular Pin) */
+.room-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: none; /* Managed dynamically by 3D projection loop */
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.25s ease;
+  overflow: visible;
+  padding: 0;
+}
+
+.room-hotspot:hover {
+  transform: translate(-50%, -50%) scale(1.18);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.16), 0 0 16px rgba(201, 161, 74, 0.35);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+body.theme-night .room-hotspot {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+body.theme-night .room-hotspot:hover {
+  background: rgba(30, 41, 59, 0.95);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.45);
+}
+
+.hotspot-core {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1e1b18;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background-color 0.25s ease;
+}
+
+.room-hotspot:hover .hotspot-core {
+  transform: rotate(90deg);
+  background: #c9a14a;
+}
+
+body.theme-night .hotspot-core {
+  background: #38bdf8;
+}
+
+.hotspot-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid #c9a14a;
+  pointer-events: none;
+  animation: hotspot-pulse-wave 2.2s infinite cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes hotspot-pulse-wave {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  100% { transform: scale(2.0); opacity: 0; }
+}
+
+.hotspot-label {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e1b18;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.room-hotspot:hover .hotspot-label {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+body.theme-night .hotspot-label {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Room Cards (Slide in on Left/Side without covering the dollhouse) */
+.room-info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-night .room-info-card {
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+}
+
+.stat-pill {
+  background: var(--stat-bg);
+  border-color: var(--stat-border);
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  background: rgba(0, 0, 0, 0.08);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+/* About Me Sub-Tabs & Cards in Night Mode */
+body.theme-night .about-subtab-btn.bg-white {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+body.theme-night #about-tab-content-story > div,
+body.theme-night #about-tab-content-phil > div,
+body.theme-night #about-tab-content-journey > div {
+  background-color: rgba(30, 41, 59, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.theme-night #about-tab-content-story p,
+body.theme-night #about-tab-content-phil p,
+body.theme-night #about-tab-content-journey p {
+  color: #94a3b8 !important;
+}
+body.theme-night #about-tab-content-story .text-\[\#1e1b18\],
+body.theme-night #about-tab-content-phil .text-\[\#1e1b18\],
+body.theme-night #about-tab-content-journey .text-\[\#1e1b18\] {
+  color: #f1f5f9 !important;
+}
+
+/* No Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Reception Welcome Toast */
+#reception-welcome-toast {
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(201, 161, 74, 0.15);
+}
+
+/* Concierge Chat Window */
+#concierge-chat-window {
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.chat-chip {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chat-chip:hover {
+  background-color: rgba(201, 161, 74, 0.15);
+  border-color: rgba(201, 161, 74, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Message Scrollbar */
+#chat-messages-container {
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+#chat-messages-container::-webkit-scrollbar {
+  width: 4px;
+}
+#chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+#chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+body.theme-night #chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+body.theme-night input[type="range"] {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1e1b18;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+body.theme-night input[type="range"]::-webkit-slider-thumb {
+  background: #38bdf8;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Drone Recon Toast (Studio Warm Luxury Shadow) */
+#drone-recon-toast {
+  box-shadow: 0 20px 45px rgba(30, 27, 24, 0.12), 0 0 24px rgba(201, 161, 74, 0.20);
+}
+
+/* Executive PPT Slide Deck Modal (Studio Dossier Shadow) */
+#project-ppt-container {
+  box-shadow: 0 35px 80px -15px rgba(30, 27, 24, 0.22), 0 0 0 1px rgba(232, 223, 211, 0.7);
+}
+
+.portfolio-item-btn {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.portfolio-item-btn:hover {
+  transform: translateX(2px);
+}
+.portfolio-item-btn.active-project {
+  border-color: #c9a14a !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+body.theme-night .portfolio-item-btn.active-project {
+  background-color: #1e293b !important;
+  border-color: #c9a14a !important;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Executive Slide Deck Animations & Accents */
+@keyframes slideFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slideFadeUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#ppt-slide-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+#ppt-slide-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+#ppt-slide-viewport::-webkit-scrollbar-thumb {
+  background: rgba(201, 161, 74, 0.25);
+  border-radius: 9999px;
+}
+#ppt-slide-viewport::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 161, 74, 0.5);
+}
